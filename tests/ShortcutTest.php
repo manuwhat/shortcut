@@ -25,7 +25,7 @@ class ShortcutTest extends TestCase
 {
     public function testCreate()
     {
-        // Ezama\Shortcut::setDir('../../');
+         Ezama\Shortcut::setDir('./');
         create_Shortcut('ArrayObject');
         $this->assertInstanceof('ArrayObject', arrayObject());
         create_Shortcut('SplFileObject');
