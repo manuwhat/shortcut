@@ -2,12 +2,12 @@ Class Instantiation Shortcut for PHP
 =====================================
 
 
-[![Latest Version](https://img.shields.io/packagist/v/ezama/Shortcut.svg?style=flat-square)](https://packagist.org/packages/ezama/Shortcut)
+[![Latest Version](https://img.shields.io/packagist/v/manuwhat/Shortcut.svg?style=flat-square)](https://packagist.org/packages/manuwhat/Shortcut)
 [![Software License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/travis/ezama/Shortcut/master.svg?style=flat-square)](https://travis-ci.org/ezama/Shortcut)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/ezama/Shortcut.svg?style=flat-square)](https://scrutinizer-ci.com/g/ezama/Shortcut/code-structure)
-[![Quality Score](https://img.shields.io/scrutinizer/g/ezama/Shortcut.svg?style=flat-square)](https://scrutinizer-ci.com/g/ezama/Shortcut)
-[![Total Downloads](https://img.shields.io/packagist/dt/ezama/Shortcut.svg?style=flat-square)](https://packagist.org/packages/ezama/Shortcut)
+[![Build Status](https://img.shields.io/travis/manuwhat/Shortcut/master.svg?style=flat-square)](https://travis-ci.org/manuwhat/Shortcut)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/manuwhat/Shortcut.svg?style=flat-square)](https://scrutinizer-ci.com/g/manuwhat/Shortcut/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/manuwhat/Shortcut.svg?style=flat-square)](https://scrutinizer-ci.com/g/manuwhat/Shortcut)
+[![Total Downloads](https://img.shields.io/packagist/dt/manuwhat/Shortcut.svg?style=flat-square)](https://packagist.org/packages/manuwhat/Shortcut)
 
 Library which create custom Shortcut for classes Instantiation.
 
