@@ -2,12 +2,7 @@ Class Instantiation Shortcut for PHP
 =====================================
 
 
-[![Latest Version](https://img.shields.io/packagist/v/manuwhat/shortcut.svg?style=flat-square)](https://packagist.org/packages/manuwhat/shortcut)
-[![Software License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/travis/manuwhat/shortcut/master.svg?style=flat-square)](https://travis-ci.com/manuwhat/shortcut)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/manuwhat/shortcut.svg?style=flat-square)](https://scrutinizer-ci.com/g/manuwhat/shortcut/code-structure)
-[![Quality Score](https://img.shields.io/scrutinizer/g/manuwhat/shortcut.svg?style=flat-square)](https://scrutinizer-ci.com/g/manuwhat/shortcut)
-[![Total Downloads](https://img.shields.io/packagist/dt/manuwhat/shortcut.svg?style=flat-square)](https://packagist.org/packages/manuwhat/Shortcut)
+
 
 Library which create custom Shortcut for classes Instantiation.
 
