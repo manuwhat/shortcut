@@ -2,7 +2,10 @@ Class Instantiation Shortcut for PHP
 =====================================
 
 
-
+[![Build Status](https://travis-ci.org/manuwhat/shortcut.svg?branch=master)](https://travis-ci.org/manuwhat/shortcut)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/manuwhat/shortcut/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/manuwhat/shortcut/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/manuwhat/shortcut/badges/build.png?b=master)](https://scrutinizer-ci.com/g/manuwhat/shortcut/build-status/master)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/manuwhat/shortcut/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 
 Library which create custom Shortcut for classes Instantiation.
 
