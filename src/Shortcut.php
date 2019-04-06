@@ -157,7 +157,7 @@ namespace EZAMA
 }
 
 namespace{
-    function create_Shortcut(string $classname, string $name='new')
+    function create_Shortcut($classname, $name='new')
     {
         return EZAMA\Shortcut::create($classname, $name);
     }
