@@ -68,8 +68,3 @@ To run unit tests
 ```bash
 phpunit require ./tests
 ```
-
-### To-do
-
-- 
-- .
