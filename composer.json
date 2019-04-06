@@ -1,6 +1,6 @@
 {
     "name": "manuwhat/shortcut",
-    "type": "Helper class",
+    "type": "library",
     "description": "Shortcut - class instantiation Shortcut designer",
     "keywords": [
 	    "Productivity",
