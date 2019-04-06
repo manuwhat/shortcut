@@ -1,0 +1,46 @@
+{
+    "name": "EZAMA/Shortcut/",
+    "type": "Helper class",
+    "description": "Shortcut - class instantiation Shortcut designer",
+    "keywords": [
+	    "Productivity",
+        "POO",
+		"class",
+		"Instance",
+        "Constructor",
+		"Shortcut",
+		"function",
+		"object"	
+    ],
+    "homepage": "https://github.com/EZAMA/Shortcut",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Akpé Aurelle Emmanuel Moïse Zinsou",
+            "email": "leizmo@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^5.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0.0",
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "EZAMA\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EZAMA\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        
+    }
+}
