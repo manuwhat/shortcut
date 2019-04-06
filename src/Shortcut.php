@@ -15,7 +15,10 @@ namespace EZAMA
 
     class Shortcut
     {
-        const VALID_PHP_FUNCTION_NAME_PATTERN = '#^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$#';
+       
+
+
+    	const VALID_PHP_FUNCTION_NAME_PATTERN = '#^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$#';
         const CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME= "new";
         const PLACEHOLDER_FOR_INTERNALS_CLASSES_OPTIONALS_PARAMETERS ="This is internal and thus sucks we must do something ClassShortcutDesigner";
         private static $DIR=null;
@@ -67,15 +70,7 @@ namespace EZAMA
                         return include_once($file);
                     }
                 } else {
-                    if (!$fileExists) {
-                        if (strtolower($name)!=='new'&&preg_match(self::VALID_PHP_FUNCTION_NAME_PATTERN, $name)) {
-                            throw new \InvalidArgumentException('function '.$name.' passed as second Argument already exists.
-							Can\'t create a shortcut with the same name');
-                        } else {
-                            throw new \InvalidArgumentException('function '.$fullQualifiedClassname.' already exists and An alias has not been provided as Argument 2.
-							Can\'t create a shortcut function with this name');
-                        }
-                    }
+                    GetTheRightExceptionMessage($fileExists,$name,$fullQualifiedClassname);
                 }
             }
         }
@@ -155,6 +150,18 @@ namespace EZAMA
             file_put_contents($file, php_strip_whitespace($file));//just for cleanliness of the generated code
             return include_once($file);
         }
+		
+		private static function GetTheRightExceptionMessage($fileExists,$name,$fullQualifiedClassname){
+			if (!$fileExists) {
+				if (strtolower($name)!=='new'&&preg_match(self::VALID_PHP_FUNCTION_NAME_PATTERN, $name)) {
+					throw new \InvalidArgumentException('function '.$name.' passed as second Argument already exists.
+					Can\'t create a shortcut with the same name');
+				} else {
+					throw new \InvalidArgumentException('function '.$fullQualifiedClassname.' already exists and An alias has not been provided as Argument 2.
+					Can\'t create a shortcut function with this name');
+				}
+			}
+		}
         
         public static function setDir($dirname)
         {
@@ -162,6 +169,7 @@ namespace EZAMA
                 self::$DIR=$dirname;
             }
         }
+		
         
         private function __construct()
         {
