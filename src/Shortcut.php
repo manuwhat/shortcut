@@ -30,7 +30,7 @@ namespace EZAMA
                     $file=self::$DIR.DIRECTORY_SEPARATOR.$fullQualifiedClassname.".Shortcut.php";
                 } else {
                     $Dir=dirname(__DIR__).DIRECTORY_SEPARATOR.'ClassShortcuts';
-                    $file=$Dir.DIRECTORY_SEPARATOR.'ClassShortcuts'.DIRECTORY_SEPARATOR.$fullQualifiedClassname.".Shortcut.php";
+                    $file=$Dir.DIRECTORY_SEPARATOR.$fullQualifiedClassname.".Shortcut.php";
                 }
                 $fileExists=file_exists($file);
                 if (!function_exists($classname)&&!function_exists($name)) {
@@ -43,54 +43,26 @@ namespace EZAMA
                         $notInstantiable=false;
                         if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
                             if ($notInstantiable) {
-                                //return;
                                 throw new \InvalidArgumentException('Not Instantiable class '.$fullQualifiedClassname.' passed as Argument');
                             } else {
-                                if (strtolower($name)!=='new'&&preg_match(self::VALID_PHP_FUNCTION_NAME_PATTERN, $name)) {
-                                    $Shortcut="<?php
-												function $name(){";
-                                } else {
-                                    $Shortcut="<?php
-												function $fullQualifiedClassname(){";
-                                }
+                                self::useTheRightName($Shortcut, $name, $fullQualifiedClassname, '');
+                                
                                 $Shortcut.="return new $classname();
                                         }";
-                                file_put_contents($file, str_replace("\t", '    ', $Shortcut));
-                                file_put_contents($file, php_strip_whitespace($file));//just for cleanliness of the generated code
-                                return include_once($file);
+                                return self::pushAndShow($file, $Shortcut);
                             }
                         }
                         self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
                         
                         $hasInternal='';
                         if ($count) {
-                            $hasInternal.='switch($count){';
-                            while ($count>0) {
-                                $hasInternal.="case $count:return new $classname(".join(',', array_slice($parameters, 0, $paramsNum-$count))."); break;";
-                                $count--;
-                            }
-                            $hasInternal.='default:return new '. $classname.'('.join(',', $parameters).');break;}';
+                            self::BuildTheSwitch($hasInternal, $count, $paramsNum, $parameters, $classname);
                         }
-                        if (strtolower($name)!=='new'&&preg_match(self::VALID_PHP_FUNCTION_NAME_PATTERN, $name)) {
-                            $Shortcut="<?php
-                                        function $name($signature){";
-                        } else {
-                            $Shortcut="<?php
-                                        function $fullQualifiedClassname($signature){";
-                        }
-                        if (!strpos($signature, "This is internal and thus sucks we must do something ClassShortcutDesigner")) {
-                            $Shortcut.="return new $classname(".join(',', $parameters).");
-                                        }";
-                        } else {
-                            $Shortcut.='
-                                        $count=count(array_keys(get_defined_vars(),"'.self::PLACEHOLDER_FOR_INTERNALS_CLASSES_OPTIONALS_PARAMETERS.'"));
-                                        '.$hasInternal.'
-                                        }';
-                        }
+                        self::useTheRightName($Shortcut, $name, $fullQualifiedClassname, $signature);
+                        
+                        self::handleInternals($Shortcut, $hasInternal, $parameters, $signature, $classname);
                             
-                        file_put_contents($file, str_replace("\t", '    ', $Shortcut));
-                        file_put_contents($file, php_strip_whitespace($file));//just for cleanliness of the generated code
-                        return include_once($file);
+                        return self::pushAndShow($file, $Shortcut);
                     } else {
                         return include_once($file);
                     }
@@ -127,7 +99,7 @@ namespace EZAMA
                     if ($method->isInternal()) {
                         $tmp.='="This is internal and thus sucks we must do something ClassShortcutDesigner"';
                     } elseif ($param->isDefaultValueConstant()) {
-                        $tmp.='='.$param->getDefaultValueConstantName();
+                        $tmp.='='.$param->getDefaultValueConstantName;
                     } elseif ($param->isDefaultValueAvailable()) {
                         $tmp.='='.var_export($param->getDefaultValue(), true);
                     } elseif ($param->allowsNull()) {
@@ -143,6 +115,47 @@ namespace EZAMA
                 }
             }
         }
+        private static function BuildTheSwitch(&$hasInternal, $count, $paramsNum, $parameters, $classname)
+        {
+            $hasInternal.='switch($count){';
+            while ($count>0) {
+                $hasInternal.="case $count:return new $classname(".join(',', array_slice($parameters, 0, $paramsNum-$count))."); break;";
+                $count--;
+            }
+            $hasInternal.='default:return new '. $classname.'('.join(',', $parameters).');break;}';
+        }
+        
+        private static function useTheRightName(&$Shortcut, $name, $fullQualifiedClassname, $signature)
+        {
+            if (strtolower($name)!=='new'&&preg_match(self::VALID_PHP_FUNCTION_NAME_PATTERN, $name)) {
+                $Shortcut="<?php
+							function $name($signature){";
+            } else {
+                $Shortcut="<?php
+							function $fullQualifiedClassname($signature){";
+            }
+        }
+        
+        private static function handleInternals(&$Shortcut, $hasInternal, $parameters, $signature, $classname)
+        {
+            if (!strpos($signature, "This is internal and thus sucks we must do something ClassShortcutDesigner")) {
+                $Shortcut.="return new $classname(".join(',', $parameters).");
+							}";
+            } else {
+                $Shortcut.='
+							$count=count(array_keys(get_defined_vars(),"'.self::PLACEHOLDER_FOR_INTERNALS_CLASSES_OPTIONALS_PARAMETERS.'"));
+							'.$hasInternal.'
+							}';
+            }
+        }
+        
+        private static function pushAndShow($file, $Shortcut)
+        {
+            file_put_contents($file, str_replace("\t", '    ', $Shortcut));
+            file_put_contents($file, php_strip_whitespace($file));//just for cleanliness of the generated code
+            return include_once($file);
+        }
+        
         public static function setDir($dirname)
         {
             if (is_dir($dirname)&&is_writable($dirname)&&!self::$DIR) {
