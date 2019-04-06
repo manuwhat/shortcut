@@ -99,7 +99,7 @@ namespace EZAMA
                     if ($method->isInternal()) {
                         $tmp.='="This is internal and thus sucks we must do something ClassShortcutDesigner"';
                     } elseif ($param->isDefaultValueConstant()) {
-                        $tmp.='='.$param->getDefaultValueConstantName;
+                        $tmp.='='.$param->getDefaultValueConstantName();
                     } elseif ($param->isDefaultValueAvailable()) {
                         $tmp.='='.var_export($param->getDefaultValue(), true);
                     } elseif ($param->allowsNull()) {
