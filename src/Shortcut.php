@@ -7,8 +7,8 @@ namespace EZAMA
 * @Version : 1.0.0
 * @Programmer : Akpé Aurelle Emmanuel Moïse Zinsou
 * @Date : 2019-04-01
-* @Released under : https://github.com/EZAMA/Shortcut/blob/master/LICENSE
-* @Repository : https://github.com/EZAMA/Shortcut
+* @Released under : https://github.com/manuwhat/Shortcut/blob/master/LICENSE
+* @Repository : https://github.com/manuwhat/Shortcut
 *
 **/
 {
