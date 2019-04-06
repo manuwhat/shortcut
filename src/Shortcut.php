@@ -67,15 +67,7 @@ namespace EZAMA
                         return include_once($file);
                     }
                 } else {
-                    if (!$fileExists) {
-                        if (strtolower($name)!=='new'&&preg_match(self::VALID_PHP_FUNCTION_NAME_PATTERN, $name)) {
-                            throw new \InvalidArgumentException('function '.$name.' passed as second Argument already exists.
-							Can\'t create a shortcut with the same name');
-                        } else {
-                            throw new \InvalidArgumentException('function '.$fullQualifiedClassname.' already exists and An alias has not been provided as Argument 2.
-							Can\'t create a shortcut function with this name');
-                        }
-                    }
+                    self::GetTheRightExceptionMessage($fileExists, $name, $fullQualifiedClassname);
                 }
             }
         }
@@ -99,7 +91,7 @@ namespace EZAMA
                     if ($method->isInternal()) {
                         $tmp.='="This is internal and thus sucks we must do something ClassShortcutDesigner"';
                     } elseif ($param->isDefaultValueConstant()) {
-                        $tmp.='='.$param->getDefaultValueConstantName;
+                        $tmp.='='.$param->getDefaultValueConstantName();
                     } elseif ($param->isDefaultValueAvailable()) {
                         $tmp.='='.var_export($param->getDefaultValue(), true);
                     } elseif ($param->allowsNull()) {
@@ -156,12 +148,26 @@ namespace EZAMA
             return include_once($file);
         }
         
+        private static function GetTheRightExceptionMessage($fileExists, $name, $fullQualifiedClassname)
+        {
+            if (!$fileExists) {
+                if (strtolower($name)!=='new'&&preg_match(self::VALID_PHP_FUNCTION_NAME_PATTERN, $name)) {
+                    throw new \InvalidArgumentException('function '.$name.' passed as second Argument already exists.
+					Can\'t create a shortcut with the same name');
+                } else {
+                    throw new \InvalidArgumentException('function '.$fullQualifiedClassname.' already exists and An alias has not been provided as Argument 2.
+					Can\'t create a shortcut function with this name');
+                }
+            }
+        }
+        
         public static function setDir($dirname)
         {
             if (is_dir($dirname)&&is_writable($dirname)&&!self::$DIR) {
                 self::$DIR=$dirname;
             }
         }
+        
         
         private function __construct()
         {
