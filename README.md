@@ -64,5 +64,5 @@ Keep in mind that only one custom Shortcut can be defined per class and that onl
 
 To run unit tests 
 ```bash
-phpunit require ./tests
+phpunit  ./tests
 ```
