@@ -23,9 +23,7 @@ namespace EZAMA
         public static function create($classname, $name=self::CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME)
         {
             if (is_string($classname)&&class_exists($classname, true)) {
-                $reflectionClass=new \reflectionClass($classname);
-                $classname=$reflectionClass->getName();
-                $fullQualifiedClassname=str_replace('\\', '_', $classname);
+                self::prepare($classname, $reflectionClass, $fullQualifiedClassname);
                 self::getTheRightDir($file, $Dir, $fullQualifiedClassname);
                 $fileExists=file_exists($file);
                 if (!function_exists($classname)&&!function_exists($name)) {
@@ -34,7 +32,7 @@ namespace EZAMA
                         self::createDir($Dir);
                         $reflectionMethod=$reflectionClass->getConstructor();
                         $notInstantiable=false;
-                        if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
+                        if (self::IsNotInstantiableOrHasNoConstructor($reflectionMethod, $reflectionClass, $notInstantiable)) {
                             return self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $file, $classname);
                         }
                         self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
@@ -55,6 +53,18 @@ namespace EZAMA
                     self::GetTheRightExceptionMessage($fileExists, $name, $fullQualifiedClassname);
                 }
             }
+        }
+        
+        private static function IsNotInstantiableOrHasNoConstructor($reflectionMethod, $reflectionClass, &$notInstantiable)
+        {
+            return is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable();
+        }
+        
+        private static function prepare(&$classname, &$reflectionClass, &$fullQualifiedClassname)
+        {
+            $reflectionClass=new \reflectionClass($classname);
+            $classname=$reflectionClass->getName();
+            $fullQualifiedClassname=str_replace('\\', '_', $classname);
         }
 
         private static function getSignature(\ReflectionMethod $method, &$signature, &$parameters, &$paramsNum, &$count)
