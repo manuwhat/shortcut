@@ -26,12 +26,7 @@ namespace EZAMA
                 $reflectionClass=new \reflectionClass($classname);
                 $classname=$reflectionClass->getName();
                 $fullQualifiedClassname=str_replace('\\', '_', $classname);
-                if ($Dir=self::$DIR) {
-                    $file=self::$DIR.DIRECTORY_SEPARATOR.$fullQualifiedClassname.".Shortcut.php";
-                } else {
-                    $Dir=dirname(__DIR__).DIRECTORY_SEPARATOR.'ClassShortcuts';
-                    $file=$Dir.DIRECTORY_SEPARATOR.$fullQualifiedClassname.".Shortcut.php";
-                }
+                self::getTheRightDir($file, $Dir, $fullQualifiedClassname);
                 $fileExists=file_exists($file);
                 if (!function_exists($classname)&&!function_exists($name)) {
                     if (!$fileExists) {
@@ -42,15 +37,7 @@ namespace EZAMA
                         $reflectionMethod=$reflectionClass->getConstructor();
                         $notInstantiable=false;
                         if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
-                            if ($notInstantiable) {
-                                throw new \InvalidArgumentException('Not Instantiable class '.$fullQualifiedClassname.' passed as Argument');
-                            } else {
-                                self::useTheRightName($Shortcut, $name, $fullQualifiedClassname, '');
-                                
-                                $Shortcut.="return new $classname();
-                                        }";
-                                return self::pushAndShow($file, $Shortcut);
-                            }
+                            return self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $file, $classname);
                         }
                         self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
                         
@@ -160,6 +147,31 @@ namespace EZAMA
                 }
             }
         }
+        
+        private static function HandleNotInstantiableAndHasNoConstructor(&$Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $file, $classname)
+        {
+            if ($notInstantiable) {
+                throw new \InvalidArgumentException('Not Instantiable class '.$fullQualifiedClassname.' passed as Argument');
+            } else {
+                self::useTheRightName($Shortcut, $name, $fullQualifiedClassname, '');
+                
+                $Shortcut.="return new $classname();
+						}";
+                return self::pushAndShow($file, $Shortcut);
+            }
+        }
+        
+        private static function getTheRightDir(&$file, &$Dir, $fullQualifiedClassname)
+        {
+            if ($Dir=self::$DIR) {
+                $file=self::$DIR.DIRECTORY_SEPARATOR.$fullQualifiedClassname.".Shortcut.php";
+            } else {
+                $Dir=dirname(__DIR__).DIRECTORY_SEPARATOR.'ClassShortcuts';
+                $file=$Dir.DIRECTORY_SEPARATOR.$fullQualifiedClassname.".Shortcut.php";
+            }
+        }
+        
+        
         
         public static function setDir($dirname)
         {
