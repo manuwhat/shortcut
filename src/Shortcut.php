@@ -31,9 +31,7 @@ namespace EZAMA
                 if (!function_exists($classname)&&!function_exists($name)) {
                     if (!$fileExists) {
                         $name=trim($name);
-                        if (!file_exists($Dir)) {
-                            mkdir($Dir);
-                        }
+                        self::createDir($Dir);
                         $reflectionMethod=$reflectionClass->getConstructor();
                         $notInstantiable=false;
                         if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
@@ -168,6 +166,13 @@ namespace EZAMA
             } else {
                 $Dir=dirname(__DIR__).DIRECTORY_SEPARATOR.'ClassShortcuts';
                 $file=$Dir.DIRECTORY_SEPARATOR.$fullQualifiedClassname.".Shortcut.php";
+            }
+        }
+        
+        private static function createDir($Dir)
+        {
+            if (!file_exists($Dir)) {
+                mkdir($Dir);
             }
         }
         
