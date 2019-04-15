@@ -29,7 +29,7 @@ Typically you would create Shortcut for class instantiation if:
 Require the library by issuing this command:
 
 ```bash
-composer require ezama/Shortcut
+composer require manuwhat/Shortcut
 ```
 
 Add `require 'vendor/autoload.php';` to the top of your script.
