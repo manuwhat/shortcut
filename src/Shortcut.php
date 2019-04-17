@@ -15,9 +15,9 @@ namespace EZAMA
 
     class Shortcut
     {
-        const VALID_PHP_FUNCTION_NAME_PATTERN = '#^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$#';
-        const CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME= "new";
-        const PLACEHOLDER_FOR_INTERNALS_CLASSES_OPTIONALS_PARAMETERS ="acce91966cd8eee995ee1ac30c98c3d89d8f9235";
+        const VALID_PHP_FUNCTION_NAME_PATTERN='#^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$#';
+        const CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME="new";
+        const PLACEHOLDER_FOR_INTERNALS_CLASSES_OPTIONALS_PARAMETERS="acce91966cd8eee995ee1ac30c98c3d89d8f9235";
         private static $DIR=null;
         
         public static function create($classname, $name=self::CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME)
@@ -99,7 +99,7 @@ namespace EZAMA
                 $hasInternal.="case $count:return new $classname(".join(',', array_slice($parameters, 0, $paramsNum-$count))."); break;";
                 $count--;
             }
-            $hasInternal.='default:return new '. $classname.'('.join(',', $parameters).');break;}';
+            $hasInternal.='default:return new '.$classname.'('.join(',', $parameters).');break;}';
         }
         
         private static function useTheRightName(&$Shortcut, $name, $fullQualifiedClassname, $signature)
@@ -129,7 +129,7 @@ namespace EZAMA
         private static function pushAndShow($file, $Shortcut)
         {
             file_put_contents($file, str_replace("\t", '    ', $Shortcut));
-            file_put_contents($file, php_strip_whitespace($file));//just for cleanliness of the generated code
+            file_put_contents($file, php_strip_whitespace($file)); //just for cleanliness of the generated code
             return include_once($file);
         }
         
