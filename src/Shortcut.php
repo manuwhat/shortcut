@@ -17,7 +17,7 @@ namespace EZAMA
     {
         const VALID_PHP_FUNCTION_NAME_PATTERN = '#^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$#';
         const CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME= "new";
-        const PLACEHOLDER_FOR_INTERNALS_CLASSES_OPTIONALS_PARAMETERS ="This is internal and thus sucks we must do something ClassShortcutDesigner";
+        const PLACEHOLDER_FOR_INTERNALS_CLASSES_OPTIONALS_PARAMETERS ="acce91966cd8eee995ee1ac30c98c3d89d8f9235";
         private static $DIR=null;
         
         public static function create($classname, $name=self::CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME)
@@ -74,7 +74,7 @@ namespace EZAMA
                 if ($param->isOptional()) {
                     $count++;
                     if ($method->isInternal()) {
-                        $tmp.='="This is internal and thus sucks we must do something ClassShortcutDesigner"';
+                        $tmp.='="acce91966cd8eee995ee1ac30c98c3d89d8f9235"';
                     } elseif ($param->isDefaultValueConstant()) {
                         $tmp.='='.$param->getDefaultValueConstantName();
                     } elseif ($param->isDefaultValueAvailable()) {
@@ -115,7 +115,7 @@ namespace EZAMA
         
         private static function handleInternals(&$Shortcut, $hasInternal, $parameters, $signature, $classname)
         {
-            if (!strpos($signature, "This is internal and thus sucks we must do something ClassShortcutDesigner")) {
+            if (!strpos($signature, "acce91966cd8eee995ee1ac30c98c3d89d8f9235")) {
                 $Shortcut.="return new $classname(".join(',', $parameters).");
 							}";
             } else {
