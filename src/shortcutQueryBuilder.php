@@ -35,7 +35,7 @@ namespace EZAMA
         
         protected static function getParameterDeclaration(\ReflectionParameter $param, &$tmp, &$count, $method)
         {
-            $tmp=$param->isPassedByReference()?'&$'.$param->getName():'$'.$param->getName();
+            $tmp=$param->isPassedByReference() ? '&$'.$param->getName() : '$'.$param->getName();
             if ($param->isOptional()) {
                 $count++;
                 if ($method->isInternal()) {

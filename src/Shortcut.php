@@ -23,7 +23,7 @@ namespace EZAMA
         
         public static function SetShortcutForAll($bool)
         {
-            self::$SHORTCUT_FOR_ALL=(bool)$bool;
+            self::$SHORTCUT_FOR_ALL=(bool) $bool;
         }
         public static function create($classname, $name=self::CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME)
         {
