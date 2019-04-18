@@ -86,25 +86,27 @@ namespace EZAMA
             }
         }
         
-        private static function getParameterDeclaration(\reflectionParameter $param, &$tmp, &$count,$method)
+        private static function getParameterDeclaration(\reflectionParameter $param, &$tmp, &$count, $method)
         {
-            if ($param->isPassedByReference()) {
-                $tmp='&$'.$param->getName();
-            } else {
-                $tmp='$'.$param->getName();
-            }
-
+            $tmp=$param->isPassedByReference()?'&$'.$param->getName():'$'.$param->getName();
             if ($param->isOptional()) {
                 $count++;
                 if ($method->isInternal()) {
                     $tmp.='="acce91966cd8eee995ee1ac30c98c3d89d8f9235"';
-                } elseif ($param->isDefaultValueConstant()) {
-                    $tmp.='='.$param->getDefaultValueConstantName();
-                } elseif ($param->isDefaultValueAvailable()) {
-                    $tmp.='='.var_export($param->getDefaultValue(), true);
-                } elseif ($param->allowsNull()) {
-                    $tmp.='=null';
+                } else {
+                    self::handleOptionalParameter($param, $tmp);
                 }
+            }
+        }
+        
+        private static function handleOptionalParameter(\reflectionParameter $param, &$tmp)
+        {
+            if ($param->isDefaultValueConstant()) {
+                $tmp.='='.$param->getDefaultValueConstantName();
+            } elseif ($param->isDefaultValueAvailable()) {
+                $tmp.='='.var_export($param->getDefaultValue(), true);
+            } elseif ($param->allowsNull()) {
+                $tmp.='=null';
             }
         }
         
