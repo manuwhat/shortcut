@@ -77,13 +77,9 @@ namespace EZAMA
                 }
                 $private_scope=true;
             }
-
-            return  self::BuildCacheAndShow($classname,$name,$file,$Dir,$fullQualifiedClassname,$fileExists,$reflectionClass,$reflectionMethod,$notInstantiable,$private_scope);      
-           
-        }
-		
-		private static function BuildCacheAndShow($classname,$name,$file,$Dir,$fullQualifiedClassname,$fileExists,$reflectionClass,$reflectionMethod,$notInstantiable,$private_scope){
-			self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);        
+                    
+            self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
+                    
             $hasInternal='';
             if ($count) {
                 self::BuildTheSwitch($hasInternal, $count, $paramsNum, $parameters, $classname);
@@ -93,7 +89,7 @@ namespace EZAMA
             self::handleInternals($Shortcut, $hasInternal, $parameters, $signature, $classname);
                         
             return self::pushAndShow($file, $Shortcut);
-		}
+        }
 
         private static function getSignature(\ReflectionMethod $method, &$signature, &$parameters, &$paramsNum, &$count)
         {
@@ -231,12 +227,15 @@ namespace EZAMA
             }
         }
         
+        
+        
         public static function setDir($dirname)
         {
             if (is_dir($dirname)&&is_writable($dirname)&&!self::$DIR) {
                 self::$DIR=$dirname;
             }
-        } 
+        }
+        
         
         private function __construct()
         {
