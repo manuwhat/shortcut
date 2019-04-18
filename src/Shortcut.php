@@ -19,7 +19,12 @@ namespace EZAMA
         const CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME="new";
         const PLACEHOLDER_FOR_INTERNALS_CLASSES_OPTIONALS_PARAMETERS="acce91966cd8eee995ee1ac30c98c3d89d8f9235";
         private static $DIR=null;
+        private static $SHORTCUT_FOR_ALL=false;
         
+        public static function SetShortcutForAll($bool)
+        {
+            self::$SHORTCUT_FOR_ALL=(bool)$bool;
+        }
         public static function create($classname, $name=self::CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME)
         {
             if (is_string($classname)&&class_exists($classname, true)) {
@@ -30,20 +35,26 @@ namespace EZAMA
                 $fileExists=file_exists($file);
                 if (!function_exists($classname)&&!function_exists($name)) {
                     if (!$fileExists) {
+                        $private_scope=false;
                         $name=trim($name);
                         self::createDir($Dir);
                         $reflectionMethod=$reflectionClass->getConstructor();
                         $notInstantiable=false;
                         if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
-                            return self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $file, $classname);
+                            self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $file, $classname);
+                            if ($Shortcut) {
+                                return self::pushAndShow($file, $Shortcut);
+                            }
+                            $private_scope=true;
                         }
+                        
                         self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
                         
                         $hasInternal='';
                         if ($count) {
                             self::BuildTheSwitch($hasInternal, $count, $paramsNum, $parameters, $classname);
                         }
-                        self::useTheRightName($Shortcut, $name, $fullQualifiedClassname, $signature);
+                        self::useTheRightNameAndScope($Shortcut, $name, $fullQualifiedClassname, $signature, $private_scope, $classname);
                         
                         self::handleInternals($Shortcut, $hasInternal, $parameters, $signature, $classname);
                             
@@ -102,14 +113,24 @@ namespace EZAMA
             $hasInternal.='default:return new '.$classname.'('.join(',', $parameters).');break;}';
         }
         
-        private static function useTheRightName(&$Shortcut, $name, $fullQualifiedClassname, $signature)
+        private static function useTheRightNameAndScope(&$Shortcut, $name, $fullQualifiedClassname, $signature, $scope, $classname)
         {
             if (strtolower($name)!=='new'&&preg_match(self::VALID_PHP_FUNCTION_NAME_PATTERN, $name)) {
                 $Shortcut="<?php
 							function $name($signature){";
+                if ($scope) {
+                    $Shortcut.="if(".'@get_class()'."!==$classname){
+									throw new scopeException(\"Shortcut function $name can only be called in class $classname scope\");
+								}";
+                }
             } else {
                 $Shortcut="<?php
 							function $fullQualifiedClassname($signature){";
+                if ($scope) {
+                    $Shortcut.="if(@get_class()!==\"$classname\"){
+							throw new scopeException(\"Shortcut function $fullQualifiedClassname can only be called in class $classname scope\");
+						}";
+                }
             }
         }
         
@@ -149,13 +170,14 @@ namespace EZAMA
         private static function HandleNotInstantiableAndHasNoConstructor(&$Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $file, $classname)
         {
             if ($notInstantiable) {
-                throw new \InvalidArgumentException('Not Instantiable class '.$fullQualifiedClassname.' passed as Argument');
+                if (!self::$SHORTCUT_FOR_ALL) {
+                    throw new \InvalidArgumentException('Not Instantiable class '.$fullQualifiedClassname.' passed as Argument');
+                }
             } else {
-                self::useTheRightName($Shortcut, $name, $fullQualifiedClassname, '');
-                
+                self::useTheRightNameAndScope($Shortcut, $name, $fullQualifiedClassname, '', false, $classname);
                 $Shortcut.="return new $classname();
 						}";
-                return self::pushAndShow($file, $Shortcut);
+                // return self::pushAndShow($file, $Shortcut);
             }
         }
         
@@ -190,11 +212,16 @@ namespace EZAMA
         {
         }
     }
+    
+    
 }
 
 namespace{
     function create_Shortcut($classname, $name='new')
     {
         return EZAMA\Shortcut::create($classname, $name);
+    }
+    class scopeException extends \Exception
+    {
     }
 }

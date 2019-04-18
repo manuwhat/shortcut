@@ -25,7 +25,8 @@ class ShortcutTest extends TestCase
 {
     public function testCreate()
     {
-         Ezama\Shortcut::setDir('./');
+        Ezama\Shortcut::setDir('./');
+        // Ezama\Shortcut::setShortcutForAll(true);
         create_Shortcut('ArrayObject');
         $this->assertInstanceof('ArrayObject', arrayObject());
         create_Shortcut('SplFileObject');
@@ -44,6 +45,7 @@ class ShortcutTest extends TestCase
         $this->expectExceptionMessage('Not Instantiable class cannotBeInstantiated passed as Argument');
         create_Shortcut('cannotBeInstantiated');
         $this->assertFalse(function_exists('cannotBeInstantiated'));
+        cannotBeInstantiated();
     }
 }
 }
