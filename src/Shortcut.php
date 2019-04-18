@@ -41,7 +41,7 @@ namespace EZAMA
                         $reflectionMethod=$reflectionClass->getConstructor();
                         $notInstantiable=false;
                         if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
-                            self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $file, $classname);
+                            self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $classname);
                             if ($Shortcut) {
                                 return self::pushAndShow($file, $Shortcut);
                             }
@@ -167,7 +167,7 @@ namespace EZAMA
             }
         }
         
-        private static function HandleNotInstantiableAndHasNoConstructor(&$Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $file, $classname)
+        private static function HandleNotInstantiableAndHasNoConstructor(&$Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $classname)
         {
             if ($notInstantiable) {
                 if (!self::$SHORTCUT_FOR_ALL) {
