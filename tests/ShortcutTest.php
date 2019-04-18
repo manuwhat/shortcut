@@ -1,6 +1,8 @@
 <?php
 namespace{
-require dirname(__DIR__).DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Shortcut.php';
+require($dir=dirname(__DIR__)).DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'shortcutQueryBuilder.php';
+require $dir.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Shortcut.php';
+
 use PHPUnit\Framework\TestCase;
 
 class unreal
