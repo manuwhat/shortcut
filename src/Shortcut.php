@@ -76,25 +76,7 @@ namespace EZAMA
             $parameters=array();
             $count=0;
             foreach ($params as $k=>$param) {
-                if ($param->isPassedByReference()) {
-                    $tmp='&$'.$param->getName();
-                } else {
-                    $tmp='$'.$param->getName();
-                }
-
-                if ($param->isOptional()) {
-                    $count++;
-                    if ($method->isInternal()) {
-                        $tmp.='="acce91966cd8eee995ee1ac30c98c3d89d8f9235"';
-                    } elseif ($param->isDefaultValueConstant()) {
-                        $tmp.='='.$param->getDefaultValueConstantName();
-                    } elseif ($param->isDefaultValueAvailable()) {
-                        $tmp.='='.var_export($param->getDefaultValue(), true);
-                    } elseif ($param->allowsNull()) {
-                        $tmp.='=null';
-                    }
-                }
-                
+                self::getParameterDeclaration($param, $tmp, $count, $method);
                 $signature.=$tmp;
                 $parameters[]='$'.$param->getName();
                 $tmp='';
@@ -103,6 +85,29 @@ namespace EZAMA
                 }
             }
         }
+        
+        private static function getParameterDeclaration(\reflectionParameter $param, &$tmp, &$count,$method)
+        {
+            if ($param->isPassedByReference()) {
+                $tmp='&$'.$param->getName();
+            } else {
+                $tmp='$'.$param->getName();
+            }
+
+            if ($param->isOptional()) {
+                $count++;
+                if ($method->isInternal()) {
+                    $tmp.='="acce91966cd8eee995ee1ac30c98c3d89d8f9235"';
+                } elseif ($param->isDefaultValueConstant()) {
+                    $tmp.='='.$param->getDefaultValueConstantName();
+                } elseif ($param->isDefaultValueAvailable()) {
+                    $tmp.='='.var_export($param->getDefaultValue(), true);
+                } elseif ($param->allowsNull()) {
+                    $tmp.='=null';
+                }
+            }
+        }
+        
         private static function BuildTheSwitch(&$hasInternal, $count, $paramsNum, $parameters, $classname)
         {
             $hasInternal.='switch($count){';
@@ -177,7 +182,6 @@ namespace EZAMA
                 self::useTheRightNameAndScope($Shortcut, $name, $fullQualifiedClassname, '', false, $classname);
                 $Shortcut.="return new $classname();
 						}";
-                // return self::pushAndShow($file, $Shortcut);
             }
         }
         
