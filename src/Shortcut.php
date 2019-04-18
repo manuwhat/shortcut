@@ -58,32 +58,37 @@ namespace EZAMA
             self::getTheRightDir($file, $Dir, $fullQualifiedClassname);
             $fileExists=file_exists($file);
             if (!function_exists($classname)&&!function_exists($name)) {
-                if ($fileExists) {
-                    return include_once($file);
-                }
-                extract(self::forwardInit($name, $Dir, $reflectionClass));
-                if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
-                    self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $classname);
-                    if ($Shortcut) {
-                        return self::pushAndShow($file, $Shortcut);
-                    }
-                    $private_scope=true;
-                }
-                    
-                self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
-                    
-                $hasInternal='';
-                if ($count) {
-                    self::BuildTheSwitch($hasInternal, $count, $paramsNum, $parameters, $classname);
-                }
-                self::useTheRightNameAndScope($Shortcut, $name, $fullQualifiedClassname, $signature, $private_scope, $classname);
-                    
-                self::handleInternals($Shortcut, $hasInternal, $parameters, $signature, $classname);
-                        
-                return self::pushAndShow($file, $Shortcut);
+                return self::handleNewShortcut($classname, $name, $file, $Dir, $fullQualifiedClassname, $fileExists, $reflectionClass);
             } else {
                 self::GetTheRightExceptionMessage($fileExists, $name, $fullQualifiedClassname);
             }
+        }
+        
+        private static function handleNewShortcut($classname, $name, $file, $Dir, $fullQualifiedClassname, $fileExists, \reflectionClass $reflectionClass)
+        {
+            if ($fileExists) {
+                return include_once($file);
+            }
+            extract(self::forwardInit($name, $Dir, $reflectionClass));
+            if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
+                self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $classname);
+                if ($Shortcut) {
+                    return self::pushAndShow($file, $Shortcut);
+                }
+                $private_scope=true;
+            }
+                    
+            self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
+                    
+            $hasInternal='';
+            if ($count) {
+                self::BuildTheSwitch($hasInternal, $count, $paramsNum, $parameters, $classname);
+            }
+            self::useTheRightNameAndScope($Shortcut, $name, $fullQualifiedClassname, $signature, $private_scope, $classname);
+                    
+            self::handleInternals($Shortcut, $hasInternal, $parameters, $signature, $classname);
+                        
+            return self::pushAndShow($file, $Shortcut);
         }
 
         private static function getSignature(\ReflectionMethod $method, &$signature, &$parameters, &$paramsNum, &$count)
