@@ -4,7 +4,6 @@ namespace EZAMA
 /**
 *
 * @Name : Shortcut
-* @Version : 1.0.0
 * @Programmer : Akpé Aurelle Emmanuel Moïse Zinsou
 * @Date : 2019-04-01
 * @Released under : https://github.com/manuwhat/Shortcut/blob/master/LICENSE
@@ -12,8 +11,9 @@ namespace EZAMA
 *
 **/
 {
+    
 
-    class Shortcut
+    class Shortcut extends shortcutQueryBuilder
     {
         const VALID_PHP_FUNCTION_NAME_PATTERN='#^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$#';
         const CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME="new";
@@ -32,25 +32,6 @@ namespace EZAMA
             }
         }
         
-        private static function _init($classname)
-        {
-            return [
-                'reflectionClass'=>$tmp=new \reflectionClass($classname),
-                'classname'=>$tmp->getName(),
-                'fullQualifiedClassname'=>str_replace('\\', '_', $classname),
-            ];
-        }
-        
-        private static function forwardInit($name, $Dir, \reflectionClass $reflectionClass)
-        {
-            self::createDir($Dir);
-            return [
-                'private_scope'=>false,
-                'name'=>trim($name),
-                'reflectionMethod'=>$reflectionClass->getConstructor(),
-                'notInstantiable'=>false,
-            ];
-        }
         
         private static function _create($classname, $name)
         {
@@ -64,7 +45,7 @@ namespace EZAMA
             }
         }
         
-        private static function handleNewShortcut($classname, $name, $file, $Dir, $fullQualifiedClassname, $fileExists, \reflectionClass $reflectionClass)
+        private static function handleNewShortcut($classname, $name, $file, $Dir, $fullQualifiedClassname, $fileExists, \ReflectionClass $reflectionClass)
         {
             if ($fileExists) {
                 return include_once($file);
@@ -77,9 +58,13 @@ namespace EZAMA
                 }
                 $private_scope=true;
             }
-                    
+
+            return  self::BuildCacheAndShow($classname, $name, $file, $fullQualifiedClassname, $reflectionMethod, $private_scope);
+        }
+        
+        private static function BuildCacheAndShow($classname, $name, $file, $fullQualifiedClassname, \ReflectionMethod $reflectionMethod, $private_scope)
+        {
             self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
-                    
             $hasInternal='';
             if ($count) {
                 self::BuildTheSwitch($hasInternal, $count, $paramsNum, $parameters, $classname);
@@ -91,57 +76,7 @@ namespace EZAMA
             return self::pushAndShow($file, $Shortcut);
         }
 
-        private static function getSignature(\ReflectionMethod $method, &$signature, &$parameters, &$paramsNum, &$count)
-        {
-            $params=$method->getParameters();
-            $paramsNum=count($params);
-            $signature='';
-            $parameters=array();
-            $count=0;
-            foreach ($params as $k=>$param) {
-                self::getParameterDeclaration($param, $tmp, $count, $method);
-                $signature.=$tmp;
-                $parameters[]='$'.$param->getName();
-                $tmp='';
-                if ($k<$paramsNum-1) {
-                    $signature.=',';
-                }
-            }
-        }
-        
-        private static function getParameterDeclaration(\reflectionParameter $param, &$tmp, &$count, $method)
-        {
-            $tmp=$param->isPassedByReference()?'&$'.$param->getName():'$'.$param->getName();
-            if ($param->isOptional()) {
-                $count++;
-                if ($method->isInternal()) {
-                    $tmp.='="acce91966cd8eee995ee1ac30c98c3d89d8f9235"';
-                } else {
-                    self::handleOptionalParameter($param, $tmp);
-                }
-            }
-        }
-        
-        private static function handleOptionalParameter(\reflectionParameter $param, &$tmp)
-        {
-            if ($param->isDefaultValueConstant()) {
-                $tmp.='='.$param->getDefaultValueConstantName();
-            } elseif ($param->isDefaultValueAvailable()) {
-                $tmp.='='.var_export($param->getDefaultValue(), true);
-            } elseif ($param->allowsNull()) {
-                $tmp.='=null';
-            }
-        }
-        
-        private static function BuildTheSwitch(&$hasInternal, $count, $paramsNum, $parameters, $classname)
-        {
-            $hasInternal.='switch($count){';
-            while ($count>0) {
-                $hasInternal.="case $count:return new $classname(".join(',', array_slice($parameters, 0, $paramsNum-$count))."); break;";
-                $count--;
-            }
-            $hasInternal.='default:return new '.$classname.'('.join(',', $parameters).');break;}';
-        }
+     
         
         private static function useTheRightNameAndScope(&$Shortcut, $name, $fullQualifiedClassname, $signature, $scope, $classname)
         {
@@ -220,15 +155,6 @@ namespace EZAMA
             }
         }
         
-        private static function createDir($Dir)
-        {
-            if (!file_exists($Dir)) {
-                mkdir($Dir);
-            }
-        }
-        
-        
-        
         public static function setDir($dirname)
         {
             if (is_dir($dirname)&&is_writable($dirname)&&!self::$DIR) {
@@ -236,13 +162,11 @@ namespace EZAMA
             }
         }
         
-        
         private function __construct()
         {
         }
     }
-    
-    
+      
 }
 
 namespace{
