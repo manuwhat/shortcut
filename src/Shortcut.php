@@ -28,45 +28,60 @@ namespace EZAMA
         public static function create($classname, $name=self::CAN_NEVER_EVER_CHOOSE_THIS_AS_FUNCTION_NAME)
         {
             if (is_string($classname)&&class_exists($classname, true)) {
-                $reflectionClass=new \reflectionClass($classname);
-                $classname=$reflectionClass->getName();
-                $fullQualifiedClassname=str_replace('\\', '_', $classname);
-                self::getTheRightDir($file, $Dir, $fullQualifiedClassname);
-                $fileExists=file_exists($file);
-                if (!function_exists($classname)&&!function_exists($name)) {
-                    if (!$fileExists) {
-                        $private_scope=false;
-                        $name=trim($name);
-                        self::createDir($Dir);
-                        $reflectionMethod=$reflectionClass->getConstructor();
-                        $notInstantiable=false;
-                        if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
-                            self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $classname);
-                            if ($Shortcut) {
-                                return self::pushAndShow($file, $Shortcut);
-                            }
-                            $private_scope=true;
-                        }
-                        
-                        self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
-                        
-                        $hasInternal='';
-                        if ($count) {
-                            self::BuildTheSwitch($hasInternal, $count, $paramsNum, $parameters, $classname);
-                        }
-                        self::useTheRightNameAndScope($Shortcut, $name, $fullQualifiedClassname, $signature, $private_scope, $classname);
-                        
-                        self::handleInternals($Shortcut, $hasInternal, $parameters, $signature, $classname);
-                            
-                        return self::pushAndShow($file, $Shortcut);
-                    } else {
-                        return include_once($file);
-                    }
-                } else {
-                    self::GetTheRightExceptionMessage($fileExists, $name, $fullQualifiedClassname);
-                }
+                return self::_create($classname, $name);
             }
         }
+		
+		private static function _init($classname, $name){
+			return [
+				'reflectionClass'=>$tmp=new \reflectionClass($classname),
+				'classname'=>$tmp->getName(),
+				'fullQualifiedClassname'=>str_replace('\\', '_', $classname),
+			];
+		}
+		
+		private static function forwardInit($name,$Dir,\reflectionClass $reflectionClass){
+			self::createDir($Dir);
+			return [
+				'private_scope'=>false,
+				'name'=>trim($name),
+				'reflectionMethod'=>$reflectionClass->getConstructor(),
+				'notInstantiable'=>false,
+			];
+		}
+		
+		private static function _create($classname, $name){
+			extract(self::_init($classname, $name));
+			self::getTheRightDir($file, $Dir, $fullQualifiedClassname);
+			$fileExists=file_exists($file);
+			if (!function_exists($classname)&&!function_exists($name)) {
+				if ($fileExists) {
+					return include_once($file);
+				}
+					extract(self::forwardInit($name,$Dir,$reflectionClass));
+					if (is_null($reflectionMethod)||$notInstantiable=!$reflectionClass->isInstantiable()) {
+						self::HandleNotInstantiableAndHasNoConstructor($Shortcut, $fullQualifiedClassname, $name, $notInstantiable, $classname);
+						if ($Shortcut) {
+							return self::pushAndShow($file, $Shortcut);
+						}
+						$private_scope=true;
+					}
+					
+					self::getSignature($reflectionMethod, $signature, $parameters, $paramsNum, $count);
+					
+					$hasInternal='';
+					if ($count) {
+						self::BuildTheSwitch($hasInternal, $count, $paramsNum, $parameters, $classname);
+					}
+					self::useTheRightNameAndScope($Shortcut, $name, $fullQualifiedClassname, $signature, $private_scope, $classname);
+					
+					self::handleInternals($Shortcut, $hasInternal, $parameters, $signature, $classname);
+						
+					return self::pushAndShow($file, $Shortcut);
+			} else {
+				self::GetTheRightExceptionMessage($fileExists, $name, $fullQualifiedClassname);
+			}			
+		}
 
         private static function getSignature(\ReflectionMethod $method, &$signature, &$parameters, &$paramsNum, &$count)
         {
